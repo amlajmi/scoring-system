@@ -1,0 +1,16 @@
+# Java/Maven
+target/
+*.class
+
+# Maven wrapper
+.mvn/
+!mvnw
+!mvnw.cmd
+
+# Eclipse
+.project
+.classpath
+.settings/
+
+# OS
+.DS_Store
