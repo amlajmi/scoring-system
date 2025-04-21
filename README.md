@@ -42,6 +42,18 @@ scoring-system/
 
 ---
 
+## 🧪 Build the project
+
+Before running the services, build the full project using Maven wrapper:
+
+```bash
+./mvnw clean install
+```
+
+This will compile and install all modules.
+
+---
+
 ## 🏗️ How to Run
 
 ### ▶️ Start infrastructure
