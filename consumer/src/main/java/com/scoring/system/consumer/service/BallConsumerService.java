@@ -15,5 +15,10 @@ public class BallConsumerService {
         System.out.println("Received event: " + event);
         fsm.pointWonBy(event.playerId());
         System.out.println(fsm.getStatus());
+        
+        if (fsm.getStatus().contains("wins the game")) {
+            fsm.reset();
+            System.out.println("New game!");
+        }
     }
 }

@@ -6,6 +6,11 @@ public class GameStateMachine {
     private int scoreA = 0;
     private int scoreB = 0;
 
+    public void reset() {
+        scoreA = 0;
+        scoreB = 0;
+    }
+
     public void pointWonBy(String playerId) {
         if (isGameOver()) return;
 
