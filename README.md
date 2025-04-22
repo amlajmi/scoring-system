@@ -52,6 +52,13 @@ Before running the services, build the full project using Maven wrapper:
 
 This will compile and install all modules.
 
+During the build, the following tests are executed:
+
+- Unit tests for the `GameStateMachine` covering basic tennis scoring scenarios.
+- Integration tests using Testcontainers:
+  - `ProducerIntegrationTest` ensures Kafka events are correctly emitted.
+  - `ConsumerIntegrationTest` ensures the consumer receives the sequence and updates the game status accordingly.
+
 ---
 
 ## 🏗️ How to Run
