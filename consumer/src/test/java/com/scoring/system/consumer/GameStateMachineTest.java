@@ -1,38 +1,43 @@
 package com.scoring.system.consumer;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.junit.jupiter.api.Test;
 
-import com.scoring.system.consumer.service.GameStateMachine;
-
-import static org.junit.jupiter.api.Assertions.*;
+import com.scoring.system.consumer.fsm.GameStateMachine;
+import com.scoring.system.consumer.fsm.GameStatus;
 
 public class GameStateMachineTest {
 
     @Test
     public void testBasicProgression() {
     	
+    	// checking detailed score display text
+    	 
         GameStateMachine game = new GameStateMachine(false); //disable auto reset
 
         game.pointWonBy("A");
-        assertEquals("Player A : 15 / Player B : 0", game.getStatus());
+        assertEquals("Player A : 15 / Player B : 0", game.getStatusMessage());
 
         game.pointWonBy("A");
-        assertEquals("Player A : 30 / Player B : 0", game.getStatus());
+        assertEquals("Player A : 30 / Player B : 0", game.getStatusMessage());
 
         game.pointWonBy("B");
-        assertEquals("Player A : 30 / Player B : 15", game.getStatus());
+        assertEquals("Player A : 30 / Player B : 15", game.getStatusMessage());
 
         game.pointWonBy("A");
-        assertEquals("Player A : 40 / Player B : 15", game.getStatus());
+        assertEquals("Player A : 40 / Player B : 15", game.getStatusMessage());
 
         game.pointWonBy("A");
-        assertEquals("Player A wins the game", game.getStatus());
+        assertEquals("Player A wins the game", game.getStatusMessage());
     }
 
     @Test
     public void testDeuceAdvantageWin() {
     	
-    	GameStateMachine game = new GameStateMachine(false); //disable auto reset
+    	// checking game status
+    	
+        GameStateMachine game = new GameStateMachine(false); // disable auto reset
 
         game.pointWonBy("A"); // 15-0
         game.pointWonBy("A"); // 30-0
@@ -40,18 +45,19 @@ public class GameStateMachineTest {
         game.pointWonBy("B"); // 40-15
         game.pointWonBy("B"); // 40-30
         game.pointWonBy("B"); // Deuce
-        assertEquals("Deuce", game.getStatus());
+        assertEquals(GameStatus.DEUCE, game.getStatus());
 
         game.pointWonBy("A");
-        assertEquals("Advantage A", game.getStatus());
+        assertEquals(GameStatus.ADVANTAGE_A, game.getStatus());
 
         game.pointWonBy("B");
-        assertEquals("Deuce", game.getStatus());
+        assertEquals(GameStatus.DEUCE, game.getStatus());
 
         game.pointWonBy("B");
-        assertEquals("Advantage B", game.getStatus());
+        assertEquals(GameStatus.ADVANTAGE_B, game.getStatus());
 
         game.pointWonBy("B");
-        assertEquals("Player B wins the game", game.getStatus());
+        assertEquals(GameStatus.PLAYER_B_WINS, game.getStatus());
     }
+
 }

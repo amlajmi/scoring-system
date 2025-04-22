@@ -25,7 +25,8 @@ import org.testcontainers.kafka.ConfluentKafkaContainer;
 import org.testcontainers.utility.DockerImageName;
 
 import com.scoring.system.common.BallWonEvent;
-import com.scoring.system.consumer.service.GameStateMachine;
+import com.scoring.system.consumer.fsm.GameStateMachine;
+import com.scoring.system.consumer.fsm.GameStatus;
 
 
 @SpringBootTest
@@ -80,7 +81,7 @@ public class ConsumerIntegrationTest {
             Thread.sleep(1000); // wait for consumer to process
         }
         
-        assertEquals("Player A wins the game", game.getStatus());
+        assertEquals(GameStatus.PLAYER_A_WINS, game.getStatus());
     }
 
 }
