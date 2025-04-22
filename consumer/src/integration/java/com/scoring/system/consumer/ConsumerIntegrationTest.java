@@ -1,87 +1,61 @@
 package com.scoring.system.consumer;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
 
-import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.common.serialization.StringSerializer;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.core.ProducerFactory;
-import org.springframework.kafka.support.serializer.JsonSerializer;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.kafka.ConfluentKafkaContainer;
-import org.testcontainers.utility.DockerImageName;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.scoring.system.common.BallWonEvent;
+import com.scoring.system.common.KafkaTestContainerExtension;
 import com.scoring.system.consumer.fsm.GameStateMachine;
 import com.scoring.system.consumer.fsm.GameStatus;
 
-
 @SpringBootTest
+@ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ConsumerIntegrationTest {
 
-    private static final String TOPIC = "ball-won-events";
-    
-    static final ConfluentKafkaContainer kafka = new ConfluentKafkaContainer(
-        DockerImageName.parse("confluentinc/cp-kafka:7.5.0")
-    ).withReuse(true);
-
-    static {
-        kafka.start();
-    }
-    
-    @DynamicPropertySource
-    static void kafkaProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.kafka.bootstrap-servers", kafka::getBootstrapServers);
-    }
+    @RegisterExtension
+    static final KafkaTestContainerExtension kafkaExtension = new KafkaTestContainerExtension();
 
     private KafkaTemplate<String, BallWonEvent> kafkaTemplate;
-    
+
     @Autowired
     private GameStateMachine game;
-    
+
+    @DynamicPropertySource
+    static void kafkaProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.kafka.bootstrap-servers", KafkaTestContainerExtension::getBootstrapServers);
+    }
+
     @BeforeAll
-    void setupKafka() {
-
-        Map<String, Object> props = new HashMap<>();
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafka.getBootstrapServers());
-        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-
-        ProducerFactory<String, BallWonEvent> pf = new DefaultKafkaProducerFactory<>(props);
-        kafkaTemplate = new KafkaTemplate<>(pf);
+    void setupKafkaTemplate() {
+        kafkaTemplate = kafkaExtension.createKafkaTemplate();
     }
 
-    @AfterAll
-    void teardown() {
-        kafka.stop();
-    }
-    
     @Test
     void shouldComputeCorrectScoreSequence() throws InterruptedException {
         game.reset();
-
         String sequence = "ABABAA";
-        for (char c : sequence.toCharArray()) {
-            kafkaTemplate.send(TOPIC, new BallWonEvent(Instant.now(), String.valueOf(c)));
-            Thread.sleep(1000); // wait for consumer to process
-        }
         
+        for (char c : sequence.toCharArray()) {
+            kafkaTemplate.send(KafkaTestContainerExtension.TOPIC, new BallWonEvent(Instant.now(), String.valueOf(c)));
+            Thread.sleep(1000); // allow time for the consumer to process
+        }
+
         assertEquals(GameStatus.PLAYER_A_WINS, game.getStatus());
     }
-
 }
