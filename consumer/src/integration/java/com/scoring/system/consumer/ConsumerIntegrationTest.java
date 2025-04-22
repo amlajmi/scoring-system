@@ -18,6 +18,7 @@ import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.serializer.JsonSerializer;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.kafka.ConfluentKafkaContainer;
@@ -28,6 +29,7 @@ import com.scoring.system.consumer.service.GameStateMachine;
 
 
 @SpringBootTest
+@ActiveProfiles("test")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ConsumerIntegrationTest {
 

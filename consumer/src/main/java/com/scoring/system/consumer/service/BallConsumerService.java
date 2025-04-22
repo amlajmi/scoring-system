@@ -20,7 +20,7 @@ public class BallConsumerService {
         fsm.pointWonBy(event.playerId());
         System.out.println(fsm.getStatus());
         
-        if (fsm.getStatus().contains("wins the game")) {
+        if (fsm.getStatus().contains("wins the game") && fsm.shouldAutoReset()) {
         	fsm.reset();
             System.out.println("New game!");
         }

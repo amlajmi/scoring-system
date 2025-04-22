@@ -11,7 +11,7 @@ public class GameStateMachineTest {
     @Test
     public void testBasicProgression() {
     	
-        GameStateMachine game = new GameStateMachine();
+        GameStateMachine game = new GameStateMachine(false); //disable auto reset
 
         game.pointWonBy("A");
         assertEquals("Player A : 15 / Player B : 0", game.getStatus());
@@ -32,7 +32,7 @@ public class GameStateMachineTest {
     @Test
     public void testDeuceAdvantageWin() {
     	
-    	GameStateMachine game = new GameStateMachine();
+    	GameStateMachine game = new GameStateMachine(false); //disable auto reset
 
         game.pointWonBy("A"); // 15-0
         game.pointWonBy("A"); // 30-0

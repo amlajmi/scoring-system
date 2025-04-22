@@ -1,13 +1,16 @@
 package com.scoring.system.consumer.service;
 
-import org.springframework.stereotype.Component;
-
-@Component
 public class GameStateMachine {
 
+    private final boolean autoReset;
+    
     private int scoreA = 0;
     private int scoreB = 0;
 
+    public GameStateMachine(boolean autoReset) {
+        this.autoReset = autoReset;
+    }
+    
     public void reset() {
         scoreA = 0;
         scoreB = 0;
@@ -59,6 +62,10 @@ public class GameStateMachine {
         return hasWinner();
     }
 
+    public boolean shouldAutoReset() {
+        return autoReset;
+    }
+    
     private String toScore(int val) {
         return switch (val) {
             case 0 -> "0";
