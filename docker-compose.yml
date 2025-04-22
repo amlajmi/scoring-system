@@ -2,7 +2,7 @@ services:
 
   kafka:
     container_name: kafka
-    image: confluentinc/cp-kafka:7.9.0
+    image: confluentinc/cp-kafka:7.5.0
     ports:
       - 9092:9092
       - 9101:9101
@@ -25,7 +25,7 @@ services:
 
   schema-registry:
     container_name: schema-registry
-    image: confluentinc/cp-schema-registry:7.9.0
+    image: confluentinc/cp-schema-registry:7.5.0
     depends_on:
       - kafka
     ports:

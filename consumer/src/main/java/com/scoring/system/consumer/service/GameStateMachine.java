@@ -1,6 +1,8 @@
 package com.scoring.system.consumer.service;
 
+import org.springframework.stereotype.Component;
 
+@Component
 public class GameStateMachine {
 
     private int scoreA = 0;

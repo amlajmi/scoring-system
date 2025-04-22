@@ -8,8 +8,12 @@ import com.scoring.system.common.BallWonEvent;
 @Service
 public class BallConsumerService {
 
-    private final GameStateMachine fsm = new GameStateMachine();
+    private final GameStateMachine fsm;
 
+    public BallConsumerService(GameStateMachine fsm) {
+        this.fsm = fsm;
+    }
+    
     @KafkaListener(topics = "ball-won-events")
     public void onBallWon(BallWonEvent event) {
         System.out.println("Received event: " + event);
@@ -17,7 +21,7 @@ public class BallConsumerService {
         System.out.println(fsm.getStatus());
         
         if (fsm.getStatus().contains("wins the game")) {
-            fsm.reset();
+        	fsm.reset();
             System.out.println("New game!");
         }
     }
