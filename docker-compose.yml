@@ -23,20 +23,6 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_JMX_PORT: 9101
 
-  schema-registry:
-    container_name: schema-registry
-    image: confluentinc/cp-schema-registry:7.5.0
-    depends_on:
-      - kafka
-    ports:
-      - "8081:8081"
-    environment:
-      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:9092
-      SCHEMA_REGISTRY_HOST_NAME: schema-registry
-      SCHEMA_REGISTRY_GROUP_ID: schema-registry-group
-      SCHEMA_REGISTRY_LEADER_ELIGIBILITY: "true"
-      SCHEMA_REGISTRY_SCHEMA_REGISTRY_ID: "1"
-
   akhq:
     container_name: akhq
     image: tchiotludo/akhq:0.25.0

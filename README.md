@@ -71,7 +71,6 @@ docker-compose up -d
 
 Accessible services:
 - AKHQ: http://localhost:8080
-- Schema Registry: http://localhost:8081
 
 ---
 
