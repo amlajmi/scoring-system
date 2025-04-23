@@ -1,19 +1,24 @@
-# 🎾 Scoring System – Tennis Kata with Kafka
+# 🎾 Tennis Scoring System
 
-This project implements a simple tennis game scoring engine.
+This repository hosts a simple tennis game scoring engine using **Kafka** and **Spring Boot**.
 
-It includes:
+It features:
 
-- A **Kafka producer** that takes a sequence like `"ABBABBBABABABABAAAB..."` and emits `BallWonEvent` events. The character ‘A’ corresponding to “player A won the ball”, and ‘B’ corresponding to “player B won the ball”. 
-- A **Kafka consumer** that listens to those events and tracks the **live score**, following real tennis rules (including deuce, advantage, win). For example, reading the following sequence `“ABABAA”`, the consumer prints :
+- 🟢 A **Kafka producer** that emits `BallWonEvent` messages based on a sequence like `"ABBABAABABABAB..."`, where each character represents the player who won the ball (`'A'` or `'B'`).
+
+- 🟡 A **Kafka consumer** that listens to these events and updates the **live game score** using real tennis rules (including *deuce*, *advantage*, *win*).
+
+📘 Example:
+
+Given the input `"ABABAA"`, the output would be:
 
 ```
-“Player A : 15 / Player B : 0”
-“Player A : 15 / Player B : 15”
-“Player A : 30 / Player B : 15”
-“Player A : 30 / Player B : 30”
-“Player A : 40 / Player B : 30”
-“Player A wins the game
+Player A : 15 / Player B : 0
+Player A : 15 / Player B : 15
+Player A : 30 / Player B : 15
+Player A : 30 / Player B : 30
+Player A : 40 / Player B : 30
+Player A wins the game
 ```
 
 ---
@@ -23,12 +28,13 @@ It includes:
 - **Java 21**
 - **Maven**
 - **Spring Boot 3.4**
-- **Apache Kafka**
+- **Apache Kafka 7.5.0**
 - **Docker Compose**
+- **Testcontainers**
 
 ---
 
-## 🚀 Modules
+## 📁 Modules Overview
 
 This is a **multi-module Maven project**:
 
@@ -42,60 +48,58 @@ scoring-system/
 
 ---
 
-## 🧪 Build the project
+## 🧪 Building the Project
 
-Before running the services, build the full project using Maven wrapper:
+To build everything:
 
 ```bash
 ./mvnw clean install
 ```
 
-This will compile and install all modules.
+This compiles all modules and runs the following tests:
 
-During the build, the following tests are executed:
-
-- Unit tests for the `GameStateMachine` covering basic tennis scoring scenarios.
-- Integration tests using Testcontainers:
-  - `ProducerIntegrationTest` ensures Kafka events are correctly emitted.
-  - `ConsumerIntegrationTest` ensures the consumer receives the sequence and updates the game status accordingly.
+- Unit tests for the tennis scoring logic (`GameStateMachine`).
+- Integration tests (using Testcontainers):
+  - `ProducerIntegrationTest` – verifies Kafka emits the correct events.
+  - `ConsumerIntegrationTest` – verifies the score updates based on incoming events.
 
 ---
 
-## 🏗️ How to Run
+## 🏗️ Running the App
 
-### ▶️ Start infrastructure
+### 🧱 1. Start the infrastructure
 
 ```bash
 docker-compose up -d
 ```
 
-Accessible services:
-- AKHQ: http://localhost:8080
+➡️ Available services:
+- **AKHQ UI** (Kafka topic browser): http://localhost:8080
 
 ---
 
-### ▶️ Run the producer with a custom sequence
+### 🎯 2. Run the Kafka Producer
 
 ```bash
 ./mvnw spring-boot:run -pl producer -Dspring-boot.run.arguments=--sequence=ABBABBBABABABABAAAB
 ```
 
+This sends events to Kafka (topic `ball-won-events`) based on the sequence.
+
 ---
 
-### ▶️ Run the consumer
+### 📢 3. Run the Kafka Consumer
 
-In another terminal, run:
+In a separate terminal:
 
 ```bash
 ./mvnw spring-boot:run -pl consumer
 ```
 
-The consumer listens to the topic `ball-won-events` and prints updates like:
+➡️ The consumer listens to events and prints game status updates like:
 
 ```
-Player A : 15 / Player B : 0
-Player A : 15 / Player B : 15
-...
+Player A : 30 / Player B : 40
 Deuce
 Advantage A
 Player A wins the game
@@ -105,4 +109,4 @@ Player A wins the game
 
 ## 📜 License
 
-MIT – use it, break it, learn from it 🚀
+**MIT** — use it, break it, learn from it 🚀
